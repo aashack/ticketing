@@ -4,17 +4,23 @@ metadata:
   name: client-depl
 spec:
   replicas: 1
-  selector:
+  selector: 
     matchLabels:
       app: client
   template:
     metadata:
       labels:
         app: client
-    spec:
+    spec: 
       containers:
         - name: client
-          image: rallycoding/ticketing-client
+          image: theshack/client
+          env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
 ---
 apiVersion: v1
 kind: Service
