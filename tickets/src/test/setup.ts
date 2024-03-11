@@ -35,18 +35,19 @@ afterAll(async () => {
 });
 
 global.signin = () => {
-  // Build a JWT Payload. { id, email }
+  // Build a JWT payload.  { id, email }
   const payload = {
-    id: '3oihnoino3n3333',
-    email: 'test@test.com'
-  }
-  // Create the JWT Token
+    id: new mongoose.Types.ObjectId().toHexString(),
+    email: 'test@test.com',
+  };
+
+  // Create the JWT!
   const token = jwt.sign(payload, process.env.JWT_KEY!);
 
-  // BUild session Object. { jwt: JWT }
-  const session = {jwt: token};
+  // Build session Object. { jwt: MY_JWT }
+  const session = { jwt: token };
 
-  // TUrn that session into JSON
+  // Turn that session into JSON
   const sessionJSON = JSON.stringify(session);
 
   // Take JSON and encode it as base64
