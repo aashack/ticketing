@@ -10,7 +10,17 @@ const stan = nats.connect('ticketing', randomBytes(4).toString('hex'), {
 stan.on('connect', () => {
     console.log('listener connected to NATS');
 
-    const subscription = stan.subscribe('ticket:created');
+    stan.on('close', () => {
+        console.log('NATS Connection Closed');
+        process.exit();
+    });
+
+    const options = stan
+        .subscriptionOptions()
+        .setManualAckMode(true)// acknowledgement mode is true
+        .setDeliverAllAvailable() // will redeliver every single event (not reccomended)
+        .setDurableName('accounting-service');
+    const subscription = stan.subscribe('ticket:created', 'queue-group-name', options);
 
     subscription.on('message', (msg: Message) => {
         const data = msg.getData();
@@ -19,7 +29,10 @@ stan.on('connect', () => {
             console.log(`Recieved event #${msg.getSequence()}, with data: ${data}`);
         }
 
-
-        // console.log('Message Recieved', msg.getSubject(), msg.getData(), msg.getSequence());
+        msg.ack();
     });
 });
+
+// These might not work on Windows
+process.on('SIGINT', () => stan.close());
+process.on('SIGTERM', () => stan.close());
