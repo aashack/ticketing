@@ -13,18 +13,9 @@ stan.on('connect', () => {
     const data = JSON.stringify({
         id: randomBytes(4).toString('hex'),
         title: 'concert-' + randomBytes(4).toString('hex'),
-        price: 20
+        price: 22
     });
     stan.publish('ticket:created', data, () => {
         console.log('Event Published', data);
     });
-
-
-
-
-    // stan.publish('ticket:created', data, () => {
-    //     console.log('Event Published', data);
-    // });
 });
-
-
